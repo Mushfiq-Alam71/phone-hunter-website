@@ -1,6 +1,6 @@
-const loadPhone = async () => {
+const loadPhone = async (searchText) => {
   const response = await fetch(
-    "https://openapi.programming-hero.com/api/phones?search=iphone"
+    `https://openapi.programming-hero.com/api/phones?search=${searchText}`
   );
   const data = await response.json();
   const phones = data.data;
@@ -11,13 +11,27 @@ const loadPhone = async () => {
 const displayPhone = (phones) => {
   //get container id
   const phoneContainer = document.getElementById("phone-container");
+  // clear phone phone container before adding new devices
+  phoneContainer.textContent = "";
 
+  // add show all button functionality
+  const showAllContainer = document.getElementById("show-all-container");
+  if (phones.length > 12) {
+    showAllContainer.classList.remove("hidden");
+  } else {
+    showAllContainer.classList.add("hidden");
+  }
+
+  //display limited devices
+  phones = phones.slice(0, 8);
+
+  //looping devices
   phones.forEach((phone) => {
     console.log(phone);
 
     //create a div
     const phoneCard = document.createElement("div");
-    phoneCard.classList = `card bg-base-100 shadow-xl gap-x-12`;
+    phoneCard.classList = `card bg-base-100 shadow-xl gap-x-12 pt-8`;
 
     //set innter HTML
     phoneCard.innerHTML = `<figure>
@@ -36,6 +50,26 @@ const displayPhone = (phones) => {
     //   append child
     phoneContainer.appendChild(phoneCard);
   });
+  toggleLoadingSpinner(false);
 };
 
-loadPhone();
+// handle search button (taking search input value and finding using button)
+const handleSearch = () => {
+  toggleLoadingSpinner(true);
+  const searchField = document.getElementById("input-field");
+  const searchText = searchField.value;
+  console.log(searchText);
+  loadPhone(searchText);
+};
+
+// loading spinner
+const toggleLoadingSpinner = (isLoading) => {
+  const loadingSpinner = document.getElementById("loading-spinner");
+  if (isLoading) {
+    loadingSpinner.classList.remove("hidden");
+  } else {
+    loadingSpinner.classList.add("hidden");
+  }
+};
+
+// loadPhone();
