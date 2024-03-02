@@ -29,7 +29,7 @@ const displayPhone = (phones, isShowAll) => {
 
   //looping devices
   phones.forEach((phone) => {
-    console.log(phone);
+    // console.log(phone);
 
     //create a div
     const phoneCard = document.createElement("div");
@@ -46,13 +46,42 @@ const displayPhone = (phones, isShowAll) => {
             <h2 class="card-title">${phone.phone_name}</h2>
             <p>If a dog chews shoes whose shoes does he choose?</p>
             <div class="card-actions justify-end">
-              <button class="btn btn-primary">Buy Now</button>
+              <button onclick="handleShowDetails('${phone.slug}')" class="btn btn-primary text-lg font-bold">Show Details</button>
             </div>
           </div>`;
     //   append child
     phoneContainer.appendChild(phoneCard);
   });
   toggleLoadingSpinner(false);
+};
+
+const handleShowDetails = async (id) => {
+  console.log("Show Details", id);
+  //load single device details
+  const response = await fetch(
+    `https://openapi.programming-hero.com/api/phone/${id}`
+  );
+  const data = await response.json();
+
+  const phone = data.data;
+  showPhoneDetails(data);
+};
+
+const showPhoneDetails = (phone) => {
+  console.log(phone);
+  const phoneName = document.getElementById("show-detail-phone-name");
+  phoneName.innerText = phone.data.name;
+
+  const showDetailContainer = document.getElementById("show-detail-container");
+  showDetailContainer.innerHTML = `
+    <div class="flex justify-center">
+    <img src="${phone.data.image}" alt="">
+    </div>
+    <p class="pt-4"><span class="font-bold">Storage:</span> ${phone.data.mainFeatures.storage}</p>
+    <p class="pt-4"><span class="font-bold">Display Size:</span> ${phone.data.mainFeatures.displaySize}</p>
+  `;
+  //show the modal
+  show_details_modal.showModal();
 };
 
 // handle search button (taking search input value and finding using button)
